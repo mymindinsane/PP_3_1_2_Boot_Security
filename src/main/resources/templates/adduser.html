@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title> Add user</title>
+
+</head>
+<body>
+<form action="#" th:action="@{/adduser}" th:object="${user}" method="post">
+    <label for="name">Name</label>
+    <input type="text" th:field="*{name}" id="name" placeholder="Name" required>
+    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+    <label for="email">Email</label>
+    <input type="email" th:field="*{email}" id="email" placeholder="Email" required>
+    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+    <label for="age">Age</label>
+    <input type="number" th:field="*{age}" id="age" placeholder="Age" required min="1" max="150">
+    <span th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></span>
+    <input type="submit" value="Add User">
+</form>
+</body>
+</html>
