@@ -28,9 +28,10 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "role_id")})
     private List<Role> roles;
 
-    public List<Role> getRoles() {
-        return roles;
-    }
+    @Column(name = "password")
+    private String password;
+
+
 
 
     public User() {
@@ -75,26 +76,33 @@ public class User implements UserDetails {
         this.age = age;
     }
 
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return roles;
     }
 
     @Override
     public String getPassword() {
-        return "";
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return name;
     }
 
-    public List<Role> getRole() {
-        return roles;
-    }
 
-    public void setRole(List<Role> role) {
-        this.roles = role;
-    }
 }
