@@ -21,6 +21,13 @@ public class User implements UserDetails {
     @Column(name = "age")
     private int age;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_with_role",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "role_id")})
+    private List<Role> roles;
+
+
 
     public User() {
     }
@@ -77,5 +84,13 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return "";
+    }
+
+    public List<Role> getRole() {
+        return roles;
+    }
+
+    public void setRole(List<Role> role) {
+        this.roles = role;
     }
 }
