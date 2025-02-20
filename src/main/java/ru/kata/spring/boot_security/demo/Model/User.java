@@ -21,12 +21,16 @@ public class User implements UserDetails {
     @Column(name = "age")
     private int age;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "user_with_role",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "role_id")})
     private List<Role> roles;
 
+    public List<Role> getRoles() {
+        return roles;
+    }
 
 
     public User() {
