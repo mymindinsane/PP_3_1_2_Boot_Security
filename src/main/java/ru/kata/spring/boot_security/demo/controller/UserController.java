@@ -40,13 +40,13 @@ public class UserController {
     @PostMapping("/adduser")
     public String addUserPOST(@ModelAttribute("user") User user) {
         userService.addUser(user);
-        return "redirect:/index";
+        return "redirect:/allusers";
     }
 
     @PostMapping("/delete")
     private String deleteUser(@RequestParam("id") long userId) {
         userService.deleteUser(userService.getUserById(userId));
-        return "redirect:/index";
+        return "redirect:/allusers";
     }
 
     @GetMapping("/edituser")
@@ -59,6 +59,6 @@ public class UserController {
     @PostMapping("/edituser")
     public String updateUser(@ModelAttribute("user") User user) {
         userService.updateUser(user.getId(), user.getUsername(), user.getEmail(), user.getAge());
-        return "redirect:/index";
+        return "redirect:/allusers";
     }
 }
