@@ -26,9 +26,6 @@ public class UserDetailsImpl implements UserDetails {
         return User.mapRolesToAuthorities(user.getRoles());
     }
 
-    /*public Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
-        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getRoleName())).collect(Collectors.toList());
-    }*/
 
     @Override
     public String getPassword() {

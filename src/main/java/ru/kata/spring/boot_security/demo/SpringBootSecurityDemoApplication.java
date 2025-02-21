@@ -19,16 +19,23 @@ public class SpringBootSecurityDemoApplication {
 
 	public static void main(String[] args) {
 		ApplicationContext context = SpringApplication.run(SpringBootSecurityDemoApplication.class, args);
-		Role adminRole = new Role("ROLE_ADMIN");
+		/*Role adminRole = new Role("ROLE_ADMIN");
 		User user = new User("artik","{noop}123","banan@mail.ru",20,new ArrayList<>(List.of(adminRole)));
 		UserService userService = context.getBean(UserService.class);
 		userService.addUser(user);
 
+
+		Role userRole = new Role("ROLE_USER");
+		User user2 = new User("diana","{noop}123","banan@mail.ru",22,new ArrayList<>(List.of(userRole)));
+		userService.addUser(user2);*/
+
+
+		/*User user3 = new User("cat","{noop}123","banan@mail.ru",22,new ArrayList<>(List.of(userRole,adminRole)));
+		userService.addUser(user3);*/
+
 		//TODO:
-		//prevent you from deleting the user you are logged in as. (maybe principal)
 		//remove the cascade creation of roles
 		//add fields to html (checkboxes for roles)
-		//thymeleaf spring security add dependency and make different views for different roles
 		//implement bcrypt
 		//logout button
 	}

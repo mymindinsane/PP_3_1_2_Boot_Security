@@ -13,5 +13,8 @@ public interface UserService extends UserDetailsService {
      List<User> getAllUsers();
      User getUserById(long id);
      void updateUser(long id,String name,String email,int age);
+     List<User> getUsersOnlyWithAdminRole(List<User> allUsers);
+     List<User> getAllUsersExceptAdmins(List<User> allUsers);
+
 
 }

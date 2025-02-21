@@ -12,6 +12,7 @@ import ru.kata.spring.boot_security.demo.Model.Role;
 import ru.kata.spring.boot_security.demo.Model.User;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,15 +57,50 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getUsersOnlyWithAdminRole(List<User> allUsers) {
+        List<User> onlyAdmins = new ArrayList<>();
+        for (User user : allUsers) {
+            List<Role> roles = user.getRoles();
+            boolean hasAdminRole = false;
+            for (Role role : roles) {
+                if (!roles.isEmpty() && role.getRoleName().equals("ROLE_ADMIN")) {
+                    hasAdminRole = true;
+                    break;
+                }
+            }
+            if (hasAdminRole){
+                onlyAdmins.add(user);
+            }
+        }
+        return onlyAdmins;
+    }
+
+    @Override
+    public List<User> getAllUsersExceptAdmins(List<User> allUsers) {
+        List<User> allUsersExceptAdmins = new ArrayList<>();
+        for (User user : allUsers) {
+            List<Role> roles = user.getRoles();
+            boolean hasAdminRole = false;
+            for (Role role : roles) {
+                if (!roles.isEmpty() && role.getRoleName().equals("ROLE_ADMIN")) {
+                    hasAdminRole = true;
+                    break;
+                }
+            }
+            if (!hasAdminRole){
+                allUsersExceptAdmins.add(user);
+            }
+        }
+        return allUsersExceptAdmins;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDAO.findUserByUsername(username);
         return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),
                 User.mapRolesToAuthorities(user.getRoles()));
     }
 
-    /*public Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
-        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getRoleName())).collect(Collectors.toList());
-    }*/
 
 
 }
