@@ -23,7 +23,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/index")
+    @GetMapping("/allusers")
     public ModelAndView listUsers() {
         List<User> users = userService.getAllUsers();
         ModelAndView modelAndView = new ModelAndView();
