@@ -25,11 +25,11 @@
                 <td th:text="${user.username}"></td>
                 <td th:text="${user.email}"></td>
                 <td th:text="${user.age}"></td>
-                <td><form th:action="@{/edituser}" method="get">
+                <td><form th:action="@{/admin/edituser}" method="get">
                     <input type="hidden" name="id" th:value="${user.id}" />
                     <input type="submit" value="Edit" class="btn btn-danger" />
                 </form></td>
-                <td><form th:action="@{/delete}" method="post">
+                <td><form th:action="@{/admin/delete}" method="post">
                     <input type="hidden" name="id" th:value="${user.id}" />
                     <input type="submit" value="Delete" class="btn btn-danger" />
                 </form></td>
@@ -37,7 +37,7 @@
             </tbody>
         </table>
     </div>
-    <p><a th:href="@{/adduser}">Add a new user</a></p>
+    <p><a th:href="@{/admin/adduser}">Add a new user</a></p>
 </div>
 
 </body>

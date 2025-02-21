@@ -23,42 +23,42 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/allusers")
+    @GetMapping("/admin/allusers")
     public ModelAndView listUsers() {
         List<User> users = userService.getAllUsers();
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("allusers");
+        modelAndView.setViewName("/admin/allusers");
         modelAndView.addObject("users", users);
         return modelAndView;
     }
 
-    @GetMapping("/adduser")
+    @GetMapping("/admin/adduser")
     public String addUser(@ModelAttribute("user") User user) {
-        return "adduser";
+        return "/admin/adduser";
     }
 
-    @PostMapping("/adduser")
+    @PostMapping("/admin/adduser")
     public String addUserPOST(@ModelAttribute("user") User user) {
         userService.addUser(user);
-        return "redirect:/allusers";
+        return "redirect:/admin/allusers";
     }
 
-    @PostMapping("/delete")
+    @PostMapping("/admin/delete")
     private String deleteUser(@RequestParam("id") long userId) {
         userService.deleteUser(userService.getUserById(userId));
-        return "redirect:/allusers";
+        return "redirect:/admin/allusers";
     }
 
-    @GetMapping("/edituser")
+    @GetMapping("/admin/edituser")
     public String editUser(@RequestParam("id") long userId,Model model) {
         User user = userService.getUserById(userId);
         model.addAttribute("user",user);
-        return "/edituser";
+        return "/admin/edituser";
     }
 
-    @PostMapping("/edituser")
+    @PostMapping("/admin/edituser")
     public String updateUser(@ModelAttribute("user") User user) {
         userService.updateUser(user.getId(), user.getUsername(), user.getEmail(), user.getAge());
-        return "redirect:/allusers";
+        return "redirect:/admin/allusers";
     }
 }

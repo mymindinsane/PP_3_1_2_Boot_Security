@@ -19,8 +19,8 @@ public class SpringBootSecurityDemoApplication {
 
 	public static void main(String[] args) {
 		ApplicationContext context = SpringApplication.run(SpringBootSecurityDemoApplication.class, args);
-		Role userRole = new Role("ROLE_USER");
-		User user = new User("diana2","321","banan@mail.ru",20,new ArrayList<>(List.of(userRole)));
+		Role adminRole = new Role("ROLE_ADMIN");
+		User user = new User("artik","{noop}123","banan@mail.ru",20,new ArrayList<>(List.of(adminRole)));
 		UserService userService = context.getBean(UserService.class);
 		userService.addUser(user);
 
