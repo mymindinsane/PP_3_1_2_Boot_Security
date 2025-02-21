@@ -59,12 +59,12 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDAO.findUserByUsername(username);
         return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),
-                mapRolesToAuthorities(user.getRoles()));
+                User.mapRolesToAuthorities(user.getRoles()));
     }
 
-    public Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+    /*public Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
         return roles.stream().map(r -> new SimpleGrantedAuthority(r.getRoleName())).collect(Collectors.toList());
-    }
+    }*/
 
 
 }

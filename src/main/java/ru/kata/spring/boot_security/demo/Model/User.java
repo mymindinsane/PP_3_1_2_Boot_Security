@@ -2,12 +2,16 @@ package ru.kata.spring.boot_security.demo.Model;
 
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Entity
-public class User  {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -27,8 +31,6 @@ public class User  {
 
     @Column(name = "password")
     private String password;
-
-
 
 
     public User() {
@@ -87,4 +89,9 @@ public class User  {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public static Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+        return roles;
+    }
+
 }
