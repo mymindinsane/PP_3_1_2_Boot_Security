@@ -2,20 +2,17 @@ package ru.kata.spring.boot_security.demo.Model;
 
 
 import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.List;
 
 
 @Entity
-public class User implements UserDetails {
+public class User  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "name")
-    private String name;
+    @Column(name = "username")
+    private String username;
     @Column(name = "email")
     private String email;
     @Column(name = "age")
@@ -37,11 +34,10 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(long id, String name, String email, int age) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.age = age;
+    public User(String password, String username, List<Role> roles) {
+        this.password = password;
+        this.username = username;
+        this.roles = roles;
     }
 
     public void setId(long id) {
@@ -52,12 +48,12 @@ public class User implements UserDetails {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String name) {
+        this.username = name;
     }
 
     public String getEmail() {
@@ -84,25 +80,11 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
-    }
-
-    @Override
     public String getPassword() {
         return password;
     }
 
-    @Override
-    public String getUsername() {
-        return name;
+    public void setPassword(String password) {
+        this.password = password;
     }
-
-
 }

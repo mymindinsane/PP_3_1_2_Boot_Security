@@ -58,7 +58,7 @@ public class UserController {
 
     @PostMapping("/edituser")
     public String updateUser(@ModelAttribute("user") User user) {
-        userService.updateUser(user.getId(), user.getName(), user.getEmail(), user.getAge());
+        userService.updateUser(user.getId(), user.getUsername(), user.getEmail(), user.getAge());
         return "redirect:/index";
     }
 }
