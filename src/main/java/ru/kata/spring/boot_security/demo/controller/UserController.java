@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.kata.spring.boot_security.demo.Model.Role;
 import ru.kata.spring.boot_security.demo.Model.User;
 import ru.kata.spring.boot_security.demo.Service.RoleService;
@@ -86,10 +89,21 @@ public class UserController {
 
 
     @PostMapping("/admin/delete")
-    private String deleteUser(@RequestParam("id") long userId) {
-        userService.deleteUser(userService.getUserById(userId));
+    private String deleteUser(@RequestParam("id") long userId, RedirectAttributes redirectAttributes) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails authorisedUser = userService.loadUserByUsername(auth.getName());
+        User userToDelete = userService.getUserById(userId);
+
+        if (authorisedUser.getUsername().equals(userToDelete.getUsername())) {
+            redirectAttributes.addFlashAttribute("deleteErrorUserId", userId);
+            return "redirect:/admin/allusers";
+        }
+
+        userService.deleteUser(userToDelete);
         return "redirect:/admin/allusers";
     }
+
+
 
     @GetMapping("/admin/edituser")
     public String editUser(@RequestParam("id") long userId, Model model) {

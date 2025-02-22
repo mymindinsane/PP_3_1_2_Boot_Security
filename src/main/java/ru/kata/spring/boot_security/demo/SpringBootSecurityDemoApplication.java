@@ -23,7 +23,7 @@ public class SpringBootSecurityDemoApplication {
 		userServiceRole.addRole(new Role("ROLE_ADMIN"));
 		userServiceRole.addRole(new Role("ROLE_USER"));
 		UserService userServiceUser = context.getBean(UserService.class);
-		/*userServiceUser.addUser(new User("artik","{noop}123",
+		userServiceUser.addUser(new User("artik","{noop}123",
 				"banan@mail.ru", 20,new ArrayList<>
 				(List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN"),
 						userServiceRole.findRoleByRoleName("ROLE_USER")))));
@@ -35,14 +35,14 @@ public class SpringBootSecurityDemoApplication {
 
 
 		userServiceUser.addUser(new User("cat","{noop}123","banan2@mail.ru",22,new ArrayList<>
-				(List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN")))));*/
+				(List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN")))));
 
 		//TODO:
-		//should be at least 1 role
 		//logout button
 		//show login page only to unauthorized users
 		//implement bcrypt
 		//unique email(optional)
+		//forbid to edit users when change role from admin to user
 	}
 
 }
