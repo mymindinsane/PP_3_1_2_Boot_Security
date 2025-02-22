@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.kata.spring.boot_security.demo.Model.Role;
 import ru.kata.spring.boot_security.demo.Model.User;
+import ru.kata.spring.boot_security.demo.Security.UserDetailsImpl;
 import ru.kata.spring.boot_security.demo.Service.RoleService;
 import ru.kata.spring.boot_security.demo.Service.UserService;
 
@@ -45,6 +46,19 @@ public class UserController {
         modelAndView.addObject("allUsersExceptAdmins", allUsersExceptAdmins);
         modelAndView.addObject("onlyAdmins", onlyAdmins);
         return modelAndView;
+    }
+
+    @GetMapping("/user")
+    public String userInfo(Model model,Authentication authentication) {
+        List<User> allusers = userService.getAllUsers();
+        User user = null;
+        for (User u : allusers){
+            if (u.getUsername().equals(authentication.getName())){
+                user = u;
+            }
+        }
+        model.addAttribute("user", user);
+        return "/user";
     }
 
     @GetMapping("/admin/adduser")
