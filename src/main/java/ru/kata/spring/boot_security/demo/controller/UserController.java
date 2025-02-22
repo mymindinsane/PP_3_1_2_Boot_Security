@@ -1,8 +1,6 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -15,12 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import ru.kata.spring.boot_security.demo.Model.Role;
 import ru.kata.spring.boot_security.demo.Model.User;
-import ru.kata.spring.boot_security.demo.Security.UserDetailsImpl;
 import ru.kata.spring.boot_security.demo.Service.RoleService;
 import ru.kata.spring.boot_security.demo.Service.UserService;
 
 
-import java.net.Authenticator;
+
 import java.util.*;
 
 @Controller
@@ -55,10 +52,18 @@ public class UserController {
     }
 
     @PostMapping("/admin/adduser")
-    public String addUserPOST(@ModelAttribute("user") User user, BindingResult bindingResult) {
+    public String addUserPOST(@ModelAttribute("user") User user, BindingResult bindingResult,Model model) {
+        List<Role> roles = roleService.getAllRoles();
+        model.addAttribute("roles", roles);
         if (user.getUsername() == null || user.getUsername().isEmpty()) {
             bindingResult.rejectValue("username", "error.username",
                     "Username cannot be empty!");
+            return "/admin/adduser";
+        }
+
+        if(user.getRoles().isEmpty()){
+            bindingResult.rejectValue("roles", "error.userName",
+                    "Should be at least 1 role!");
             return "/admin/adduser";
         }
 
@@ -96,7 +101,31 @@ public class UserController {
     }
 
     @PostMapping("/admin/edituser")
-    public String updateUser(@ModelAttribute("user") User user) {
+    public String updateUser(@ModelAttribute("user") User user,BindingResult bindingResult,Model model) {
+        List<Role> roles = roleService.getAllRoles();
+        model.addAttribute("roles", roles);
+
+        List<User> allUsersList = userService.getAllUsers();
+        allUsersList.remove(user);
+        System.out.println(allUsersList);
+        List<String> allUsernameWithoutCurrent = new ArrayList<>();
+
+        for(User u : allUsersList){
+            allUsernameWithoutCurrent.add(u.getUsername());
+        }
+
+        if(user.getRoles().isEmpty()){
+            bindingResult.rejectValue("roles", "error.userName",
+                    "Should be at least 1 role!");
+            return "/admin/edituser";
+        }
+
+        UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
+        if (allUsernameWithoutCurrent.contains(user.getUsername())) {
+            bindingResult.rejectValue("username", "error.userName",
+                    "You cannot use this username!");
+            return "/admin/edituser";
+        }
         userService.updateUser(user.getId(), user.getUsername(), user.getEmail(),
                 user.getAge(), user.getRoles(), user.getPassword());
         return "redirect:/admin/allusers";
