@@ -39,10 +39,8 @@ public class SpringBootSecurityDemoApplication {
 
 		//TODO:
 		//logout button
-		//show login page only to unauthorized users
-		//implement bcrypt
-		//unique email(optional)
 		//forbid to edit users when change role from admin to user
+		//implement bcrypt
 	}
 
 }

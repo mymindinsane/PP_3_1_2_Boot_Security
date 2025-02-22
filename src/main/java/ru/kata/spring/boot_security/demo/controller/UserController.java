@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,6 @@ import ru.kata.spring.boot_security.demo.Model.Role;
 import ru.kata.spring.boot_security.demo.Model.User;
 import ru.kata.spring.boot_security.demo.Service.RoleService;
 import ru.kata.spring.boot_security.demo.Service.UserService;
-
 
 
 import java.util.*;
@@ -55,7 +55,7 @@ public class UserController {
     }
 
     @PostMapping("/admin/adduser")
-    public String addUserPOST(@ModelAttribute("user") User user, BindingResult bindingResult,Model model) {
+    public String addUserPOST(@ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
         List<Role> roles = roleService.getAllRoles();
         model.addAttribute("roles", roles);
         if (user.getUsername() == null || user.getUsername().isEmpty()) {
@@ -64,7 +64,7 @@ public class UserController {
             return "/admin/adduser";
         }
 
-        if(user.getRoles().isEmpty()){
+        if (user.getRoles().isEmpty()) {
             bindingResult.rejectValue("roles", "error.userName",
                     "Should be at least 1 role!");
             return "/admin/adduser";
@@ -87,7 +87,6 @@ public class UserController {
     }
 
 
-
     @PostMapping("/admin/delete")
     private String deleteUser(@RequestParam("id") long userId, RedirectAttributes redirectAttributes) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -104,7 +103,6 @@ public class UserController {
     }
 
 
-
     @GetMapping("/admin/edituser")
     public String editUser(@RequestParam("id") long userId, Model model) {
         User user = userService.getUserById(userId);
@@ -115,33 +113,47 @@ public class UserController {
     }
 
     @PostMapping("/admin/edituser")
-    public String updateUser(@ModelAttribute("user") User user,BindingResult bindingResult,Model model) {
+    public String updateUser(@ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
         List<Role> roles = roleService.getAllRoles();
         model.addAttribute("roles", roles);
 
         List<User> allUsersList = userService.getAllUsers();
         allUsersList.remove(user);
-        System.out.println(allUsersList);
+        System.out.println("Все пользователи: " + allUsersList);
         List<String> allUsernameWithoutCurrent = new ArrayList<>();
 
-        for(User u : allUsersList){
+        for (User u : allUsersList) {
             allUsernameWithoutCurrent.add(u.getUsername());
         }
 
-        if(user.getRoles().isEmpty()){
-            bindingResult.rejectValue("roles", "error.userName",
-                    "Should be at least 1 role!");
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            bindingResult.rejectValue("roles", "error.userName", "Должна быть хотя бы одна роль!");
             return "/admin/edituser";
         }
 
-        UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
+        // Проверка на уникальность имени пользователя
         if (allUsernameWithoutCurrent.contains(user.getUsername())) {
-            bindingResult.rejectValue("username", "error.userName",
-                    "You cannot use this username!");
+            bindingResult.rejectValue("username", "error.userName", "Невозможно использовать это имя пользователя!");
             return "/admin/edituser";
         }
         userService.updateUser(user.getId(), user.getUsername(), user.getEmail(),
                 user.getAge(), user.getRoles(), user.getPassword());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.getName().equals(user.getUsername())) {
+            UserDetails updatedUserDetails = userService.loadUserByUsername(user.getUsername());
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                    updatedUserDetails,
+                    auth.getCredentials(),
+                    updatedUserDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
+        }
+
+        if (!user.getRoles().contains(roleService.findRoleByRoleName("ROLE_ADMIN"))){
+            return "redirect:/user";
+        }
         return "redirect:/admin/allusers";
     }
+
+
 }
