@@ -131,11 +131,13 @@ public class UserController {
             return "/admin/edituser";
         }
 
-        // Проверка на уникальность имени пользователя
         if (allUsernameWithoutCurrent.contains(user.getUsername())) {
             bindingResult.rejectValue("username", "error.userName", "Невозможно использовать это имя пользователя!");
             return "/admin/edituser";
         }
+
+
+
         userService.updateUser(user.getId(), user.getUsername(), user.getEmail(),
                 user.getAge(), user.getRoles(), user.getPassword());
 
@@ -149,7 +151,8 @@ public class UserController {
             SecurityContextHolder.getContext().setAuthentication(newAuth);
         }
 
-        if (!user.getRoles().contains(roleService.findRoleByRoleName("ROLE_ADMIN"))){
+        if (user.getUsername().equals(auth.getName()) && !user.getRoles()
+                .contains(roleService.findRoleByRoleName("ROLE_ADMIN"))){
             return "redirect:/user";
         }
         return "redirect:/admin/allusers";

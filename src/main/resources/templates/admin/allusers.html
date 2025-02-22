@@ -6,6 +6,11 @@
     <title></title>
 </head>
 <body>
+<div style="display: flex; justify-content: flex-end;">
+    <form th:action="@{/logout}" method="get">
+        <input type="submit" value="Logout" class="btn btn-danger" />
+    </form>
+</div>
 <div th:switch="${allUsersExceptAdmins.size() == 0}">
     <h2 th:case="true">No users yet!</h2>
     <div th:case="*">
