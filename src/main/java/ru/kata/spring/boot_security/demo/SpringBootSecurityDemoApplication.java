@@ -31,17 +31,19 @@ public class SpringBootSecurityDemoApplication {
 
 
 
-		userServiceUser.addUser(new User("diana","{noop}123","banan1@mail.ru",22,new ArrayList<>
+		/*userServiceUser.addUser(new User("diana","{noop}123","banan1@mail.ru",22,new ArrayList<>
 				(List.of(userServiceRole.findRoleByRoleName("ROLE_USER")))));
 
 
 		userServiceUser.addUser(new User("cat","{noop}123","banan2@mail.ru",22,new ArrayList<>
-				(List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN")))));
+				(List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN")))));*/
 
 		//TODO:
 		//add fields to html (checkboxes for roles)
 		//logout button
+		//show login page only to unauthorized users
 		//implement bcrypt
+		//unique email(optional)
 	}
 
 }

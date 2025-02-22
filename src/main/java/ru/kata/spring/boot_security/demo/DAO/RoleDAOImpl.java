@@ -5,6 +5,10 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.Model.Role;
+import ru.kata.spring.boot_security.demo.Model.User;
+
+import java.util.List;
+
 @Repository
 public class RoleDAOImpl implements RoleDAO{
     @PersistenceContext
@@ -27,5 +31,11 @@ public class RoleDAOImpl implements RoleDAO{
         if (findRoleByRoleName(role.getRoleName()) == null){
             entityManager.persist(role);
         }
+    }
+
+    @Override
+    public List<Role> getAllRoles() {
+        TypedQuery<Role> query = entityManager.createQuery("from Role", Role.class);
+        return query.getResultList();
     }
 }

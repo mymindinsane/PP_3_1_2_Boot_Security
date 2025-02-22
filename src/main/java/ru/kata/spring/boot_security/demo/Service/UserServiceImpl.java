@@ -2,8 +2,6 @@ package ru.kata.spring.boot_security.demo.Service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -14,10 +12,7 @@ import ru.kata.spring.boot_security.demo.Model.User;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -70,8 +65,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void updateUser(long id,String name,String email,int age) {
-         userDAO.updateUser(id,name,email,age);
+    public void updateUser(long id, String name, String email, int age, List<Role> roles, String password) {
+         userDAO.updateUser(id,name,email,age,roles,password);
     }
 
     @Override

@@ -12,7 +12,7 @@ public interface UserDAO  {
     void deleteUser(User user);
     List<User> getAllUsers();
     User getUserById(long id);
-    void updateUser(long id,String name,String email,int age);
+    void updateUser(long id, String name, String email, int age, List<Role> roles, String password);
     User findUserByUsername(String username);
     List<Role> getAllRolesFromUser();
 }

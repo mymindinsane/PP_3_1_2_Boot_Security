@@ -39,13 +39,15 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public void updateUser(long id,String name,String email,int age) {
+    public void updateUser(long id, String name, String email, int age, List<Role> roles, String password) {
         User user = entityManager.find(User.class,id);
         user.setUsername(name);
         user.setEmail(email);
         user.setAge(age);
-
+        user.setRoles(roles);
+        user.setPassword(password);
     }
+
 
     @Override
     public User findUserByUsername(String username) {

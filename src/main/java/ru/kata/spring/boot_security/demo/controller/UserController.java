@@ -50,7 +50,9 @@ public class UserController {
     }
 
     @GetMapping("/admin/adduser")
-    public String addUser(@ModelAttribute("user") User user) {
+    public String addUser(@ModelAttribute("user") User user ,Model model) {
+        List<Role> roles = roleService.getAllRoles();
+        model.addAttribute("roles",roles);
         return "/admin/adduser";
     }
 
@@ -75,13 +77,16 @@ public class UserController {
     @GetMapping("/admin/edituser")
     public String editUser(@RequestParam("id") long userId, Model model) {
         User user = userService.getUserById(userId);
+        List<Role> roles = roleService.getAllRoles();
         model.addAttribute("user", user);
+        model.addAttribute("roles",roles);
         return "/admin/edituser";
     }
 
     @PostMapping("/admin/edituser")
     public String updateUser(@ModelAttribute("user") User user) {
-        userService.updateUser(user.getId(), user.getUsername(), user.getEmail(), user.getAge());
+        userService.updateUser(user.getId(), user.getUsername(), user.getEmail(),
+                user.getAge(),user.getRoles(),user.getPassword());
         return "redirect:/admin/allusers";
     }
 }
