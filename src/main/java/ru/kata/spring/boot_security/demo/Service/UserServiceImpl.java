@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.kata.spring.boot_security.demo.DAO.RoleDAO;
 import ru.kata.spring.boot_security.demo.DAO.UserDAO;
 import ru.kata.spring.boot_security.demo.Model.Role;
 import ru.kata.spring.boot_security.demo.Model.User;
@@ -14,6 +15,7 @@ import ru.kata.spring.boot_security.demo.Model.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,17 +23,33 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
+    private final RoleDAO roleDAO;
 
     @Autowired
-    public UserServiceImpl(UserDAO userDAO) {
+    public UserServiceImpl(UserDAO userDAO, RoleDAO roleDAO) {
         this.userDAO = userDAO;
+        this.roleDAO = roleDAO;
     }
 
     @Transactional
     @Override
     public void addUser(User user) {
+        List<Role> userRoles = user.getRoles();
+        List<Role> persistentRoles = new ArrayList<>();
+
+        for (Role role : userRoles) {
+            Role existingRole = roleDAO.findRoleByRoleName(role.getRoleName());
+            if (existingRole == null) {
+                existingRole = new Role(role.getRoleName());
+                roleDAO.addRole(existingRole);
+            }
+            persistentRoles.add(existingRole);
+        }
+
+        user.setRoles(persistentRoles);
         userDAO.addUser(user);
     }
+
 
     @Transactional
     @Override

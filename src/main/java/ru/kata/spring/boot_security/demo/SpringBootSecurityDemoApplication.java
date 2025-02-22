@@ -8,6 +8,7 @@ import ru.kata.spring.boot_security.demo.DAO.UserDAO;
 import ru.kata.spring.boot_security.demo.DAO.UserDAOImpl;
 import ru.kata.spring.boot_security.demo.Model.Role;
 import ru.kata.spring.boot_security.demo.Model.User;
+import ru.kata.spring.boot_security.demo.Service.RoleService;
 import ru.kata.spring.boot_security.demo.Service.UserService;
 
 import java.util.ArrayList;
@@ -19,25 +20,28 @@ public class SpringBootSecurityDemoApplication {
 
 	public static void main(String[] args) {
 		ApplicationContext context = SpringApplication.run(SpringBootSecurityDemoApplication.class, args);
-		/*Role adminRole = new Role("ROLE_ADMIN");
-		User user = new User("artik","{noop}123","banan@mail.ru",20,new ArrayList<>(List.of(adminRole)));
-		UserService userService = context.getBean(UserService.class);
-		userService.addUser(user);
+		RoleService userServiceRole = context.getBean(RoleService.class);
+		userServiceRole.addRole(new Role("ROLE_ADMIN"));
+		userServiceRole.addRole(new Role("ROLE_USER"));
+		UserService userServiceUser = context.getBean(UserService.class);
+		/*userServiceUser.addUser(new User("artik","{noop}123",
+				"banan@mail.ru", 20,new ArrayList<>
+				(List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN"),
+						userServiceRole.findRoleByRoleName("ROLE_USER")))));*/
 
 
-		Role userRole = new Role("ROLE_USER");
-		User user2 = new User("diana","{noop}123","banan@mail.ru",22,new ArrayList<>(List.of(userRole)));
-		userService.addUser(user2);*/
+
+		userServiceUser.addUser(new User("diana","{noop}123","banan1@mail.ru",22,new ArrayList<>
+				(List.of(userServiceRole.findRoleByRoleName("ROLE_USER")))));
 
 
-		/*User user3 = new User("cat","{noop}123","banan@mail.ru",22,new ArrayList<>(List.of(userRole,adminRole)));
-		userService.addUser(user3);*/
+		userServiceUser.addUser(new User("cat","{noop}123","banan2@mail.ru",22,new ArrayList<>
+				(List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN")))));
 
 		//TODO:
-		//remove the cascade creation of roles
 		//add fields to html (checkboxes for roles)
-		//implement bcrypt
 		//logout button
+		//implement bcrypt
 	}
 
 }
