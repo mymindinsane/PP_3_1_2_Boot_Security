@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void updateUser(long id, String name, String email, int age, List<Role> roles, String password) {
-         userDAO.updateUser(id,name,email,age,roles,password);
+        userDAO.updateUser(id, name, email, age, roles, password);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
                     break;
                 }
             }
-            if (hasAdminRole){
+            if (hasAdminRole) {
                 onlyAdmins.add(user);
             }
         }
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
                     break;
                 }
             }
-            if (!hasAdminRole){
+            if (!hasAdminRole) {
                 allUsersExceptAdmins.add(user);
             }
         }
@@ -108,12 +108,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDAO.findUserByUsername(username);
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),
+        if (user == null) {
+            throw new UsernameNotFoundException("User with username " + username + " not found");
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 User.mapRolesToAuthorities(user.getRoles()));
     }
-
-
-
 }
+
+

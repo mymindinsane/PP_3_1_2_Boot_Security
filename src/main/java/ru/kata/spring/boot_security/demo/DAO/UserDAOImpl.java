@@ -53,7 +53,11 @@ public class UserDAOImpl implements UserDAO {
     public User findUserByUsername(String username) {
         TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);;
         query.setParameter("username",username);
-        return query.getSingleResult();
+        if (query.getResultList().isEmpty()){
+            return null;
+        } else {
+            return query.getSingleResult();
+        }
     }
 
     @Override

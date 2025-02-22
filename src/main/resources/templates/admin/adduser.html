@@ -10,12 +10,23 @@
     <label for="name">Name</label>
     <input type="text" th:field="*{username}" id="name" placeholder="Username" required>
     <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+    <label for="name">Password</label>
+    <input type="text" th:field="*{password}" id="password" placeholder="Password" required>
+    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
     <label for="email">Email</label>
     <input type="email" th:field="*{email}" id="email" placeholder="Email" required>
     <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
     <label for="age">Age</label>
     <input type="number" th:field="*{age}" id="age" placeholder="Age" required min="1" max="150">
     <span th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></span>
+    <label>Roles:
+        <input type="checkbox" name="roles"
+               th:each="role : ${roles}"
+               th:text="${role.roleName}"
+               th:value="${role.roleName}"
+               th:field="*{roles}"
+        />
+    </label>
     <input type="submit" value="Add User">
 </form>
 </body>

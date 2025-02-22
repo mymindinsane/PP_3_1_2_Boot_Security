@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,10 +21,7 @@ import ru.kata.spring.boot_security.demo.Service.UserService;
 
 
 import java.net.Authenticator;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Controller
 public class UserController {
@@ -50,23 +48,37 @@ public class UserController {
     }
 
     @GetMapping("/admin/adduser")
-    public String addUser(@ModelAttribute("user") User user ,Model model) {
+    public String addUser(@ModelAttribute("user") User user, Model model) {
         List<Role> roles = roleService.getAllRoles();
-        model.addAttribute("roles",roles);
+        model.addAttribute("roles", roles);
         return "/admin/adduser";
     }
 
     @PostMapping("/admin/adduser")
     public String addUserPOST(@ModelAttribute("user") User user, BindingResult bindingResult) {
-        UserDetails userDetails = userService.loadUserByUsername(user.getUsername());
-        if (userDetails.getUsername().equals(user.getUsername())) {
-            bindingResult.rejectValue("username", "error.userName",
-                    "You cannot use this username!");
+        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+            bindingResult.rejectValue("username", "error.username",
+                    "Username cannot be empty!");
             return "/admin/adduser";
         }
+
+        UserDetails existingUser = null;
+        try {
+            existingUser = userService.loadUserByUsername(user.getUsername());
+        } catch (UsernameNotFoundException ignored) {
+        }
+
+        if (existingUser != null) {
+            bindingResult.rejectValue("username", "error.username",
+                    "This username is already taken!");
+            return "/admin/adduser";
+        }
+
         userService.addUser(user);
         return "redirect:/admin/allusers";
     }
+
+
 
     @PostMapping("/admin/delete")
     private String deleteUser(@RequestParam("id") long userId) {
@@ -79,14 +91,14 @@ public class UserController {
         User user = userService.getUserById(userId);
         List<Role> roles = roleService.getAllRoles();
         model.addAttribute("user", user);
-        model.addAttribute("roles",roles);
+        model.addAttribute("roles", roles);
         return "/admin/edituser";
     }
 
     @PostMapping("/admin/edituser")
     public String updateUser(@ModelAttribute("user") User user) {
         userService.updateUser(user.getId(), user.getUsername(), user.getEmail(),
-                user.getAge(),user.getRoles(),user.getPassword());
+                user.getAge(), user.getRoles(), user.getPassword());
         return "redirect:/admin/allusers";
     }
 }
