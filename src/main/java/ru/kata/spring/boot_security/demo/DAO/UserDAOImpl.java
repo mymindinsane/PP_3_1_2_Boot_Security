@@ -65,4 +65,15 @@ public class UserDAOImpl implements UserDAO {
         TypedQuery<Role> query = entityManager.createQuery("SELECT Role from User", Role.class);
         return query.getResultList();
     }
+
+    @Override
+    public User findUserByEmail(String email) {
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);;
+        query.setParameter("email",email);
+        if (query.getResultList().isEmpty()){
+            return null;
+        } else {
+            return query.getSingleResult();
+        }
+    }
 }

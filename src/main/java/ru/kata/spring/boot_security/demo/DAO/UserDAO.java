@@ -15,4 +15,5 @@ public interface UserDAO  {
     void updateUser(long id, String name, String email, int age, List<Role> roles, String password);
     User findUserByUsername(String username);
     List<Role> getAllRolesFromUser();
+    User findUserByEmail(String email);
 }

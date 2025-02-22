@@ -16,6 +16,7 @@ public interface UserService extends UserDetailsService {
      void updateUser(long id, String name, String email, int age, List<Role> roles, String password);
      List<User> getUsersOnlyWithAdminRole(List<User> allUsers);
      List<User> getAllUsersExceptAdmins(List<User> allUsers);
+     User findUserByEmail(String email);
 
 
 }

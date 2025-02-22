@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.kata.spring.boot_security.demo.Model.Role;
 import ru.kata.spring.boot_security.demo.Model.User;
-import ru.kata.spring.boot_security.demo.Security.UserDetailsImpl;
 import ru.kata.spring.boot_security.demo.Service.RoleService;
 import ru.kata.spring.boot_security.demo.Service.UserService;
 
@@ -84,16 +83,30 @@ public class UserController {
             return "/admin/adduser";
         }
 
-        UserDetails existingUser = null;
+        UserDetails checkOnUsernameAlreadyTaken = null;
         try {
-            existingUser = userService.loadUserByUsername(user.getUsername());
+            checkOnUsernameAlreadyTaken = userService.loadUserByUsername(user.getUsername());
         } catch (UsernameNotFoundException ignored) {
         }
 
-        if (existingUser != null) {
+        if (checkOnUsernameAlreadyTaken != null) {
             bindingResult.rejectValue("username", "error.username",
                     "This username is already taken!");
             return "/admin/adduser";
+        }
+
+        List<User> allUsersList = userService.getAllUsers();
+        allUsersList.remove(user);
+        List<String> allEmailsWithoutCurrent = new ArrayList<>();
+
+        for (User u : allUsersList) {
+            allEmailsWithoutCurrent.add(u.getEmail());
+        }
+
+        if (allEmailsWithoutCurrent.contains(user.getEmail())) {
+            bindingResult.rejectValue("email", "error.email",
+                    "This email is already taken!");
+            return "/admin/edituser";
         }
 
         userService.addUser(user);
@@ -133,23 +146,35 @@ public class UserController {
 
         List<User> allUsersList = userService.getAllUsers();
         allUsersList.remove(user);
-        System.out.println("Все пользователи: " + allUsersList);
         List<String> allUsernameWithoutCurrent = new ArrayList<>();
 
         for (User u : allUsersList) {
             allUsernameWithoutCurrent.add(u.getUsername());
         }
 
+        List<String> allEmailsWithoutCurrent = new ArrayList<>();
+
+        for (User u : allUsersList) {
+            allEmailsWithoutCurrent.add(u.getEmail());
+        }
+
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            bindingResult.rejectValue("roles", "error.userName", "Должна быть хотя бы одна роль!");
+            bindingResult.rejectValue("roles", "error.userName",
+                    "Should be at least 1 role!");
             return "/admin/edituser";
         }
 
         if (allUsernameWithoutCurrent.contains(user.getUsername())) {
-            bindingResult.rejectValue("username", "error.userName", "Невозможно использовать это имя пользователя!");
+            bindingResult.rejectValue("username", "error.userName",
+                    "This username is already taken!");
             return "/admin/edituser";
         }
 
+        if (allEmailsWithoutCurrent.contains(user.getEmail())) {
+            bindingResult.rejectValue("email", "error.email",
+                    "This email is already taken!");
+            return "/admin/edituser";
+        }
 
 
         userService.updateUser(user.getId(), user.getUsername(), user.getEmail(),
