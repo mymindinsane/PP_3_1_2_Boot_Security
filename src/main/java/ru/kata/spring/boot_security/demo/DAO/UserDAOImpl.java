@@ -4,7 +4,6 @@ package ru.kata.spring.boot_security.demo.DAO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.Model.Role;
 import ru.kata.spring.boot_security.demo.Model.User;
@@ -51,7 +50,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User findUserByUsername(String username) {
-        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);;
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class);
         query.setParameter("username",username);
         if (query.getResultList().isEmpty()){
             return null;
@@ -68,7 +67,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User findUserByEmail(String email) {
-        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);;
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
         query.setParameter("email",email);
         if (query.getResultList().isEmpty()){
             return null;

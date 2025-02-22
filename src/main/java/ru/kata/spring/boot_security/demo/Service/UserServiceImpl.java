@@ -66,7 +66,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void updateUser(long id, String name, String email, int age, List<Role> roles, String password) {
-        User user = userDAO.getUserById(id);
         List<Role> persistentRoles = new ArrayList<>();
 
         for (Role role : roles) {
