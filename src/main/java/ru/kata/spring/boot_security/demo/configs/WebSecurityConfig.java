@@ -7,6 +7,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import ru.kata.spring.boot_security.demo.Service.UserServiceImpl;
 
@@ -39,17 +41,16 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    /*@Bean
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-*/
 
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider(UserServiceImpl userServiceImpl) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        /*authenticationProvider.setPasswordEncoder(passwordEncoder());*/
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
         authenticationProvider.setUserDetailsService(userServiceImpl);
         return authenticationProvider;
     }

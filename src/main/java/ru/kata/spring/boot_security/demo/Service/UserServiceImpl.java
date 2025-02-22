@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.DAO.RoleDAO;
 import ru.kata.spring.boot_security.demo.DAO.UserDAO;
@@ -19,11 +20,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
     private final RoleDAO roleDAO;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDAO userDAO, RoleDAO roleDAO) {
+    public UserServiceImpl(UserDAO userDAO, RoleDAO roleDAO, PasswordEncoder passwordEncoder) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -40,7 +43,7 @@ public class UserServiceImpl implements UserService {
             }
             persistentRoles.add(existingRole);
         }
-
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(persistentRoles);
         userDAO.addUser(user);
     }
@@ -77,7 +80,7 @@ public class UserServiceImpl implements UserService {
             persistentRoles.add(existingRole);
         }
         roles = persistentRoles;
-        userDAO.updateUser(id, name, email, age, roles, password);
+        userDAO.updateUser(id, name, email, age, roles, passwordEncoder.encode(password));
     }
 
 

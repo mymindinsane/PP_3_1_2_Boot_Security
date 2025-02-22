@@ -23,25 +23,23 @@ public class SpringBootSecurityDemoApplication {
 		userServiceRole.addRole(new Role("ROLE_ADMIN"));
 		userServiceRole.addRole(new Role("ROLE_USER"));
 		UserService userServiceUser = context.getBean(UserService.class);
-		userServiceUser.addUser(new User("artik","{noop}123",
-				"banan@mail.ru", 20,new ArrayList<>
+		userServiceUser.addUser(new User("useradmin",
+				"123",
+				"useradmin@mail.ru", 20,new ArrayList<>
 				(List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN"),
 						userServiceRole.findRoleByRoleName("ROLE_USER")))));
 
 
 
-		userServiceUser.addUser(new User("diana",
-				"{noop}123","banan1@mail.ru",22,new ArrayList<>
+		userServiceUser.addUser(new User("user",
+				"456","user@mail.ru",22,new ArrayList<>
 				(List.of(userServiceRole.findRoleByRoleName("ROLE_USER")))));
 
 
-		userServiceUser.addUser(new User("cat",
-				"{noop}123","banan2@mail.ru",22,new ArrayList<>
+		userServiceUser.addUser(new User("admin",
+				"789","admin@mail.ru",25,new ArrayList<>
 				(List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN")))));
 
-		//TODO:
-		//implement bcrypt
-		//unique email
 	}
 
 }
