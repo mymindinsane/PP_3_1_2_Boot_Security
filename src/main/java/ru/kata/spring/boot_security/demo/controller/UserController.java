@@ -176,6 +176,14 @@ public class UserController {
             return "/admin/edituser";
         }
 
+        User userBeforeUpdate = userService.getUserById(user.getId());
+        String password = "";
+
+        if(user.getPassword() == null){
+            password = userBeforeUpdate.getPassword();
+        } else {
+            password = user.getPassword();
+        }
 
         userService.updateUser(user.getId(), user.getUsername(), user.getEmail(),
                 user.getAge(), user.getRoles(), user.getPassword());
