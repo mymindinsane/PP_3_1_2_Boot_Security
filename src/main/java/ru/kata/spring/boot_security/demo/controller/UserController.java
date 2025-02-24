@@ -35,15 +35,21 @@ public class UserController {
     }
 
     @GetMapping("/admin/allusers")
-    public ModelAndView listUsers() {
+    public ModelAndView listUsers(Authentication authentication) {
+        List<User> allusers = userService.getAllUsers();
+        User user = null;
+        for (User u : allusers){
+            if (u.getUsername().equals(authentication.getName())){
+                user = u;
+            }
+        }
         List<User> usersAndAdmins = userService.getAllUsers();
         List<User> onlyAdmins = userService.getUsersOnlyWithAdminRole(usersAndAdmins);
-        List<User> allUsersExceptAdmins = userService.getAllUsersExceptAdmins(usersAndAdmins);
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/admin/allusers");
-        modelAndView.addObject("allUsersExceptAdmins", allUsersExceptAdmins);
-        modelAndView.addObject("onlyAdmins", onlyAdmins);
+        modelAndView.addObject("usersAndAdmins", usersAndAdmins);
+        modelAndView.addObject("user",user);
         return modelAndView;
     }
 
@@ -175,10 +181,17 @@ public class UserController {
                     "This email is already taken!");
             return "/admin/edituser";
         }
+        User userBeforeUpdate = userService.getUserById(user.getId());
+        String password = "";
 
+        if(user.getPassword() == null){
+            password = userBeforeUpdate.getPassword();
+        } else {
+            password = user.getPassword();
+        }
 
         userService.updateUser(user.getId(), user.getUsername(), user.getEmail(),
-                user.getAge(), user.getRoles(), user.getPassword());
+                user.getAge(), user.getRoles(), password);
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth.getName().equals(user.getUsername())) {
