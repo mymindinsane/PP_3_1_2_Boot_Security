@@ -186,7 +186,7 @@ public class UserController {
         }
 
         userService.updateUser(user.getId(), user.getUsername(), user.getEmail(),
-                user.getAge(), user.getRoles(), user.getPassword());
+                user.getAge(), user.getRoles(), password);
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth.getName().equals(user.getUsername())) {
