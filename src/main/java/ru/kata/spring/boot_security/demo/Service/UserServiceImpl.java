@@ -80,7 +80,11 @@ public class UserServiceImpl implements UserService {
             persistentRoles.add(existingRole);
         }
         roles = persistentRoles;
-        userDAO.updateUser(id, name, email, age, roles, passwordEncoder.encode(password));
+        if (password.equals(userBeforeUpdate.getPassword())) {
+            userDAO.updateUser(id, name, email, age, roles, password);
+        } else {
+            userDAO.updateUser(id, name, email, age, roles, passwordEncoder.encode(password));
+        }
     }
 
 
