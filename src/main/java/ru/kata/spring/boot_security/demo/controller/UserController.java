@@ -116,7 +116,7 @@ public class UserController {
         }
 
         userService.addUser(user);
-        return "redirect:/admin/allusers";
+        return "redirect:/admin";
     }
 
 
@@ -128,11 +128,11 @@ public class UserController {
 
         if (authorisedUser.getUsername().equals(userToDelete.getUsername())) {
             redirectAttributes.addFlashAttribute("deleteErrorUserId", userId);
-            return "redirect:/admin/allusers";
+            return "redirect:/admin";
         }
 
         userService.deleteUser(userToDelete);
-        return "redirect:/admin/allusers";
+        return "redirect:/admin";
     }
 
 
@@ -207,7 +207,7 @@ public class UserController {
                 .contains(roleService.findRoleByRoleName("ROLE_ADMIN"))){
             return "redirect:/user";
         }
-        return "redirect:/admin/allusers";
+        return "redirect:/admin";
     }
 
 
