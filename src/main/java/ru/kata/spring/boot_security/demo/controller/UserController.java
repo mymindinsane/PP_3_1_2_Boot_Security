@@ -129,7 +129,7 @@ public class UserController {
         User userToDelete = userService.getUserById(userId);
 
         if (authorisedUser.getUsername().equals(userToDelete.getUsername())) {
-            redirectAttributes.addFlashAttribute("error", userId);
+            redirectAttributes.addFlashAttribute("error", "You can't delete yourself");
             return "redirect:/admin";
         }
 
