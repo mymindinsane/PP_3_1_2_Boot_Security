@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,13 +11,20 @@
         <span class="navbar-text text-white">
             <span th:text="${user.email}"></span> with roles: <span th:text="${user.roles}"></span>
         </span>
-    <a href="/logout" class="btn btn-outline-light">Logout</a>
+    <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="btn btn-outline-light">Logout</button>
+    </form>
 </nav>
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-2">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action active">User</a>
+            <div class="list-group d-flex flex-column">
+                <div sec:authorize="hasRole('ROLE_USER')">
+                    <a href="/user" class="list-group-item list-group-item-action active">User</a>
+                </div>
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a href="/admin" class="list-group-item list-group-item-action">Admin panel</a>
+                </div>
             </div>
         </div>
         <div class="col-md-10">

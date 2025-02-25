@@ -37,8 +37,8 @@ public class WebSecurityConfig {
                         .permitAll()
 
                 )
-                .logout(LogoutConfigurer::permitAll
-                );
+                .logout(LogoutConfigurer::permitAll);
+
 
         return http.build();
     }
