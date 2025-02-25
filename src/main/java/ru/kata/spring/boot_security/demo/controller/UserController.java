@@ -37,9 +37,10 @@ public class UserController {
     @GetMapping("/admin/allusers")
     public ModelAndView listUsers(Authentication authentication) {
         List<User> allusers = userService.getAllUsers();
+        List<Role> roles = roleService.getAllRoles();
         User user = null;
-        for (User u : allusers){
-            if (u.getUsername().equals(authentication.getName())){
+        for (User u : allusers) {
+            if (u.getUsername().equals(authentication.getName())) {
                 user = u;
             }
         }
@@ -49,16 +50,17 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("/admin/allusers");
         modelAndView.addObject("usersAndAdmins", usersAndAdmins);
-        modelAndView.addObject("user",user);
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("roles", roles);
         return modelAndView;
     }
 
     @GetMapping("/user")
-    public String userInfo(Model model,Authentication authentication) {
+    public String userInfo(Model model, Authentication authentication) {
         List<User> allusers = userService.getAllUsers();
         User user = null;
-        for (User u : allusers){
-            if (u.getUsername().equals(authentication.getName())){
+        for (User u : allusers) {
+            if (u.getUsername().equals(authentication.getName())) {
                 user = u;
             }
         }
@@ -127,7 +129,7 @@ public class UserController {
         User userToDelete = userService.getUserById(userId);
 
         if (authorisedUser.getUsername().equals(userToDelete.getUsername())) {
-            redirectAttributes.addFlashAttribute("deleteErrorUserId", userId);
+            redirectAttributes.addFlashAttribute("error", userId);
             return "redirect:/admin";
         }
 
@@ -146,7 +148,7 @@ public class UserController {
     }
 
     @PostMapping("/admin/edituser")
-    public String updateUser(@ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
+    public String updateUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes, Model model) {
         List<Role> roles = roleService.getAllRoles();
         model.addAttribute("roles", roles);
 
@@ -165,26 +167,26 @@ public class UserController {
         }
 
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            bindingResult.rejectValue("roles", "error.userName",
+            redirectAttributes.addFlashAttribute("error",
                     "Should be at least 1 role!");
-            return "/admin/edituser";
+            return "redirect:/admin";
         }
 
         if (allUsernameWithoutCurrent.contains(user.getUsername())) {
-            bindingResult.rejectValue("username", "error.userName",
+            redirectAttributes.addFlashAttribute("error",
                     "This username is already taken!");
-            return "/admin/edituser";
+            return "redirect:/admin";
         }
 
         if (allEmailsWithoutCurrent.contains(user.getEmail())) {
-            bindingResult.rejectValue("email", "error.email",
+            redirectAttributes.addFlashAttribute("error",
                     "This email is already taken!");
-            return "/admin/edituser";
+            return "redirect:/admin";
         }
         User userBeforeUpdate = userService.getUserById(user.getId());
         String password = "";
 
-        if(user.getPassword() == null){
+        if (user.getPassword() == null) {
             password = userBeforeUpdate.getPassword();
         } else {
             password = user.getPassword();
@@ -204,7 +206,7 @@ public class UserController {
         }
 
         if (user.getUsername().equals(auth.getName()) && !user.getRoles()
-                .contains(roleService.findRoleByRoleName("ROLE_ADMIN"))){
+                .contains(roleService.findRoleByRoleName("ROLE_ADMIN"))) {
             return "redirect:/user";
         }
         return "redirect:/admin";
