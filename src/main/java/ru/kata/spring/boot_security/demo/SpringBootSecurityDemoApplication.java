@@ -17,30 +17,33 @@ import java.util.List;
 @SpringBootApplication
 public class SpringBootSecurityDemoApplication {
 
-	public static void main(String[] args) {
-		ApplicationContext context = SpringApplication.run(SpringBootSecurityDemoApplication.class, args);
-		RoleService userServiceRole = context.getBean(RoleService.class);
-		userServiceRole.addRole(new Role("ROLE_ADMIN"));
-		userServiceRole.addRole(new Role("ROLE_USER"));
-		UserService userServiceUser = context.getBean(UserService.class);
-		userServiceUser.addUser(new User("useradmin",
-				"123",
-				"useradmin@mail.ru", 20,new ArrayList<>
-				(List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN"),
-						userServiceRole.findRoleByRoleName("ROLE_USER")))));
+    public static void main(String[] args) {
+        ApplicationContext context = SpringApplication.run(SpringBootSecurityDemoApplication.class, args);
+        RoleService userServiceRole = context.getBean(RoleService.class);
+        userServiceRole.addRole(new Role("ROLE_ADMIN"));
+        userServiceRole.addRole(new Role("ROLE_USER"));
+        UserService userServiceUser = context.getBean(UserService.class);
+        userServiceUser.addUser(new User("useradmin",
+                "123",
+                "useradmin@mail.ru", 20, new ArrayList<>
+                (List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN"),
+                        userServiceRole.findRoleByRoleName("ROLE_USER")))));
+
+
+        userServiceUser.addUser(new User("user",
+                "456", "user@mail.ru", 22, new ArrayList<>
+                (List.of(userServiceRole.findRoleByRoleName("ROLE_USER")))));
+
+
+        userServiceUser.addUser(new User("admin",
+                "789", "admin@mail.ru", 25, new ArrayList<>
+                (List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN")))));
 
 
 
-		userServiceUser.addUser(new User("user",
-				"456","user@mail.ru",22,new ArrayList<>
-				(List.of(userServiceRole.findRoleByRoleName("ROLE_USER")))));
+        //TODO:
+        // Spring security thymeleaf dependency on user page
+    }
 
-
-		userServiceUser.addUser(new User("admin",
-				"789","admin@mail.ru",25,new ArrayList<>
-				(List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN")))));
-
-	}
-
-	}
+}
 
