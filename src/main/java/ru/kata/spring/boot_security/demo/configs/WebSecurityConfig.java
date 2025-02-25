@@ -32,6 +32,8 @@ public class WebSecurityConfig {
                 )
                 .formLogin(login -> login
                         .successHandler(successUserHandler)
+                        .loginPage("/login")
+                        .usernameParameter("email")
                         .permitAll()
 
                 )
