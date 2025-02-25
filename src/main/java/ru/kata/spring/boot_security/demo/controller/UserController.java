@@ -74,19 +74,19 @@ public class UserController {
     }
 
     @PostMapping("/admin/adduser")
-    public String addUserPOST(@ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
+    public String addUserPOST(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes, Model model) {
         List<Role> roles = roleService.getAllRoles();
         model.addAttribute("roles", roles);
         if (user.getUsername() == null || user.getUsername().isEmpty()) {
-            bindingResult.rejectValue("username", "error.username",
+            redirectAttributes.addFlashAttribute("error",
                     "Username cannot be empty!");
-            return "/admin/adduser";
+            return "redirect:/admin";
         }
 
         if (user.getRoles().isEmpty()) {
-            bindingResult.rejectValue("roles", "error.userName",
+            redirectAttributes.addFlashAttribute("error",
                     "Should be at least 1 role!");
-            return "/admin/adduser";
+            return "redirect:/admin";
         }
 
         UserDetails checkOnUsernameAlreadyTaken = null;
@@ -96,9 +96,9 @@ public class UserController {
         }
 
         if (checkOnUsernameAlreadyTaken != null) {
-            bindingResult.rejectValue("username", "error.username",
+            redirectAttributes.addFlashAttribute("error",
                     "This username is already taken!");
-            return "/admin/adduser";
+            return "redirect:/admin";
         }
 
         List<User> allUsersList = userService.getAllUsers();
@@ -110,9 +110,9 @@ public class UserController {
         }
 
         if (allEmailsWithoutCurrent.contains(user.getEmail())) {
-            bindingResult.rejectValue("email", "error.email",
+            redirectAttributes.addFlashAttribute("error",
                     "This email is already taken!");
-            return "/admin/edituser";
+            return "redirect:/admin";
         }
 
         userService.addUser(user);
