@@ -1,0 +1,31 @@
+/* Стили для таблицы пользователей */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+/* Кнопки для действий */
+button {
+    padding: 5px 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+/* Модальные окна */
+.modal-dialog {
+    max-width: 600px;
+}
+
+.modal-header {
+    background-color: #f7f7f7;
+}
