@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,10 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.kata.spring.boot_security.demo.Model.Role;
@@ -23,7 +22,7 @@ import ru.kata.spring.boot_security.demo.Service.UserService;
 
 import java.util.*;
 
-@Controller
+@RestController
 public class UserController {
     private final UserService userService;
     private final RoleService roleService;
@@ -35,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping("/admin/allusers")
-    public ModelAndView listUsers(Authentication authentication) {
+    public ResponseEntity<List<User>> listUsers(Authentication authentication) {
         List<User> allusers = userService.getAllUsers();
         List<Role> roles = roleService.getAllRoles();
         User user = null;
@@ -44,15 +43,9 @@ public class UserController {
                 user = u;
             }
         }
-        List<User> usersAndAdmins = userService.getAllUsers();
-        List<User> onlyAdmins = userService.getUsersOnlyWithAdminRole(usersAndAdmins);
-
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("/admin/allusers");
-        modelAndView.addObject("usersAndAdmins", usersAndAdmins);
-        modelAndView.addObject("user", user);
-        modelAndView.addObject("roles", roles);
-        return modelAndView;
+        return !allusers.isEmpty()
+                ? new ResponseEntity<>(allusers, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/user")
@@ -75,20 +68,15 @@ public class UserController {
         return "/admin/adduser";
     }
 
-    @PostMapping("/admin/adduser")
-    public String addUserPOST(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes, Model model) {
-        List<Role> roles = roleService.getAllRoles();
-        model.addAttribute("roles", roles);
+    @PutMapping("/admin/adduser")
+    public ResponseEntity<?> addUserPOST(@RequestBody User user) {
+        userService.addUser(user);
         if (user.getUsername() == null || user.getUsername().isEmpty()) {
-            redirectAttributes.addFlashAttribute("error",
-                    "Username cannot be empty!");
-            return "redirect:/admin";
+            return new ResponseEntity<>(HttpStatus.CREATED);
         }
 
         if (user.getRoles().isEmpty()) {
-            redirectAttributes.addFlashAttribute("error",
-                    "Should be at least 1 role!");
-            return "redirect:/admin";
+            return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
         }
 
         UserDetails checkOnUsernameAlreadyTaken = null;
@@ -98,9 +86,7 @@ public class UserController {
         }
 
         if (checkOnUsernameAlreadyTaken != null) {
-            redirectAttributes.addFlashAttribute("error",
-                    "This username is already taken!");
-            return "redirect:/admin";
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
         List<User> allUsersList = userService.getAllUsers();
@@ -112,29 +98,26 @@ public class UserController {
         }
 
         if (allEmailsWithoutCurrent.contains(user.getEmail())) {
-            redirectAttributes.addFlashAttribute("error",
-                    "This email is already taken!");
-            return "redirect:/admin";
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
         userService.addUser(user);
-        return "redirect:/admin";
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
 
-    @PostMapping("/admin/delete")
-    private String deleteUser(@RequestParam("id") long userId, RedirectAttributes redirectAttributes) {
+    @DeleteMapping("/admin/delete")
+    private ResponseEntity<?> deleteUser(@RequestParam("id") long userId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails authorisedUser = userService.loadUserByUsername(auth.getName());
         User userToDelete = userService.getUserById(userId);
 
         if (authorisedUser.getUsername().equals(userToDelete.getUsername())) {
-            redirectAttributes.addFlashAttribute("error", "You can't delete yourself");
-            return "redirect:/admin";
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-
         userService.deleteUser(userToDelete);
-        return "redirect:/admin";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
@@ -147,8 +130,8 @@ public class UserController {
         return "/admin/edituser";
     }
 
-    @PostMapping("/admin/edituser")
-    public String updateUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes, Model model) {
+    @PutMapping("/admin/edituser")
+    public ResponseEntity<?> updateUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes, Model model) {
         List<Role> roles = roleService.getAllRoles();
         model.addAttribute("roles", roles);
 
@@ -167,21 +150,18 @@ public class UserController {
         }
 
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            redirectAttributes.addFlashAttribute("error",
-                    "Should be at least 1 role!");
-            return "redirect:/admin";
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
         }
 
         if (allUsernameWithoutCurrent.contains(user.getUsername())) {
-            redirectAttributes.addFlashAttribute("error",
-                    "This username is already taken!");
-            return "redirect:/admin";
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+
         }
 
         if (allEmailsWithoutCurrent.contains(user.getEmail())) {
-            redirectAttributes.addFlashAttribute("error",
-                    "This email is already taken!");
-            return "redirect:/admin";
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+
         }
         User userBeforeUpdate = userService.getUserById(user.getId());
         String password = "";
@@ -207,8 +187,8 @@ public class UserController {
 
         if (user.getUsername().equals(auth.getName()) && !user.getRoles()
                 .contains(roleService.findRoleByRoleName("ROLE_ADMIN"))) {
-            return "redirect:/user";
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return "redirect:/admin";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

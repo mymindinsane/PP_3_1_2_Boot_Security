@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.Model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -26,6 +27,7 @@ public class User {
     @JoinTable(name = "user_with_role",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "role_id")})
+    @JsonManagedReference
     private List<Role> roles;
 
     @Column(name = "password")
