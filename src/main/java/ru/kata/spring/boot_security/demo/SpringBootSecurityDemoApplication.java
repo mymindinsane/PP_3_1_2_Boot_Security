@@ -39,10 +39,6 @@ public class SpringBootSecurityDemoApplication {
                 "789", "admin@mail.ru", 25, new ArrayList<>
                 (List.of(userServiceRole.findRoleByRoleName("ROLE_ADMIN")))));
 
-
-
-        //TODO:
-        // Spring security thymeleaf dependency on user page
     }
 
 }
