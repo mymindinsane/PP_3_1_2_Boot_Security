@@ -115,7 +115,7 @@ public class UserController {
         User userToDelete = userService.getUserById(userId);
 
         if (authorisedUser.getUsername().equals(userToDelete.getUsername())) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         userService.deleteUser(userToDelete);
         return new ResponseEntity<>(HttpStatus.OK);
