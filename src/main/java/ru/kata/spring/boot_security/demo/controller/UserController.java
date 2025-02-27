@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public String userInfo(Model model, Authentication authentication) {
+    public ResponseEntity<User> userInfo(Model model, Authentication authentication) {
         List<User> allusers = userService.getAllUsers();
         User user = null;
         for (User u : allusers) {
@@ -58,25 +58,24 @@ public class UserController {
             }
         }
         model.addAttribute("user", user);
-        return "/user";
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("/admin/adduser")
-    public String addUser(@ModelAttribute("user") User user, Model model) {
+    public ResponseEntity<User> addUser(@ModelAttribute("user") User user, Model model) {
         List<Role> roles = roleService.getAllRoles();
         model.addAttribute("roles", roles);
-        return "/admin/adduser";
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping("/admin/adduser")
+    @PostMapping("/admin/adduser")
     public ResponseEntity<?> addUserPOST(@RequestBody User user) {
-        userService.addUser(user);
         if (user.getUsername() == null || user.getUsername().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         if (user.getRoles().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         UserDetails checkOnUsernameAlreadyTaken = null;
@@ -101,8 +100,10 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
+
+
         userService.addUser(user);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(user,HttpStatus.OK);
 
     }
 

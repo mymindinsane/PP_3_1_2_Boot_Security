@@ -98,7 +98,6 @@
     </div>
 </div>
 <div th:each="user : ${usersAndAdmins}">
-    <!-- Модальное окно удаления пользователя -->
     <div class="modal fade" th:id="'deleteUserModal-' + ${user.id}" tabindex="-1" aria-labelledby="deleteUserModalLabel"
          aria-hidden="true">
         <div class="modal-dialog">
