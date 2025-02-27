@@ -123,18 +123,20 @@ public class UserController {
 
 
     @GetMapping("/admin/edituser")
-    public String editUser(@RequestParam("id") long userId, Model model) {
+    public ResponseEntity<?> editUser(@RequestParam("id") long userId, Model model) {
         User user = userService.getUserById(userId);
         List<Role> roles = roleService.getAllRoles();
         model.addAttribute("user", user);
         model.addAttribute("roles", roles);
-        return "/admin/edituser";
+        return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
     @PutMapping("/admin/edituser")
-    public ResponseEntity<?> updateUser(@ModelAttribute("user") User user, RedirectAttributes redirectAttributes, Model model) {
-        List<Role> roles = roleService.getAllRoles();
-        model.addAttribute("roles", roles);
+    public ResponseEntity<?> updateUser(@RequestBody User user) {
+
+            System.out.println("Received user: " + user);
+            // Логируем username, чтобы увидеть, что приходит
+            System.out.println("Username: " + user.getUsername());
 
         List<User> allUsersList = userService.getAllUsers();
         allUsersList.remove(user);
@@ -152,17 +154,14 @@ public class UserController {
 
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
         }
 
         if (allUsernameWithoutCurrent.contains(user.getUsername())) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
-
         }
 
         if (allEmailsWithoutCurrent.contains(user.getEmail())) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
-
         }
         User userBeforeUpdate = userService.getUserById(user.getId());
         String password = "";
