@@ -174,11 +174,50 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <!-- Данные будут вставляться сюда динамически через JavaScript -->
+
                         </tbody>
                     </table>
                 </div>
             </div>
+            <div id="newUserFormContainer" class="mt-3" style="display: none;">
+                <h3>Add New User</h3>
+                <form id="newUserForm">
+                    <div class="mb-3">
+                        <label for="newUserName" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="newUserName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newUserAge" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="newUserAge" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newUserEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="newUserEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newUserPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="newUserPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="ROLE_USER" id="roleUserAdd">
+                            <label class="form-check-label" for="roleUser">
+                                USER
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="ROLE_ADMIN" id="roleAdminAdd">
+                            <label class="form-check-label" for="roleAdmin">
+                                ADMIN
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Add new user</button>
+                </form>
+            </div>
+
         </main>
     </div>
 </div>

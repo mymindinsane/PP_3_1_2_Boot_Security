@@ -145,6 +145,65 @@ document.getElementById("deleteUserForm").onsubmit = function (event) {
         .catch(error => console.error('Error deleting user:', error));
 };
 
+// Функция для переключения вкладок
+function loadContent(url, element) {
+    // Делаем все вкладки неактивными
+    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
+    // Делаем текущую вкладку активной
+    element.classList.add('active');
+
+    // Проверяем, какую вкладку нужно отобразить
+    if (url === '/admin/allusers') {
+        document.getElementById('newUserFormContainer').style.display = 'none'; // Скрываем форму добавления нового пользователя
+        document.getElementById('contentArea').style.display = 'block'; // Показываем таблицу пользователей
+        loadUsers(); // Загружаем список пользователей
+    } else if (url === '/admin/adduser') {
+        document.getElementById('newUserFormContainer').style.display = 'block'; // Показываем форму добавления нового пользователя
+        document.getElementById('contentArea').style.display = 'none'; // Скрываем таблицу пользователей
+    }
+}
+
+// Функция для отправки данных нового пользователя
+document.getElementById('newUserForm').onsubmit = function (event) {
+    event.preventDefault();  // Отменяем стандартное поведение формы
+
+    const newUser = {
+        username: document.getElementById('newUserName').value,
+        age: document.getElementById('newUserAge').value,
+        email: document.getElementById('newUserEmail').value,
+        password: document.getElementById('newUserPassword').value,
+        roles: []
+    };
+
+    // Проверяем, какие чекбоксы для ролей выбраны
+    if (document.getElementById('roleUserAdd').checked) {
+        newUser.roles.push('ROLE_USER');
+    }
+    if (document.getElementById('roleAdminAdd').checked) {
+        newUser.roles.push('ROLE_ADMIN');
+    }
+
+    // Отправляем запрос на создание нового пользователя
+    fetch('/admin/adduser', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newUser)
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('New user added successfully');
+                loadUsers();  // Перезагружаем таблицу пользователей
+                loadContent('/admin/allusers', document.querySelector('.nav-link'));  // Переключаемся на таблицу пользователей
+            } else {
+                alert('Error adding new user');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+};
+
 
 // Загружаем пользователей при старте страницы
 document.addEventListener('DOMContentLoaded', function () {
