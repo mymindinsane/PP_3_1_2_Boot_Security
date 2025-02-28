@@ -100,23 +100,51 @@ function loadUsers() {
         .catch(error => console.error('Error loading users:', error));
 }
 
-// Функция для удаления пользователя
+// Функция для отображения данных пользователя в модальном окне для удаления
 function deleteUser(userId) {
-    if (confirm("Are you sure you want to delete this user?")) {
-        fetch(`/admin/delete/${userId}`, {
-            method: 'DELETE',
+    fetch(`/admin/edituser?id=${userId}`)
+        .then(response => response.json())
+        .then(user => {
+            // Заполняем поля данными пользователя
+            document.getElementById("deleteId").value = user.id;
+            document.getElementById("deleteUserName").value = user.username;// Используй соответствующие поля
+            document.getElementById("deleteAge").value = user.age;
+            document.getElementById("deleteEmail").value = user.email;
+
+            document.getElementById("deleteRoleUser").checked = user.roles.some(role => role.roleName === 'ROLE_USER');
+            document.getElementById("deleteRoleAdmin").checked = user.roles.some(role => role.roleName === 'ROLE_ADMIN');
+
+            var myModal = new bootstrap.Modal(document.getElementById('deleteUserModal'), {
+                keyboard: false
+            });
+            myModal.show();
         })
-            .then(response => {
-                if (response.ok) {
-                    loadUsers();  // Перезагружаем таблицу после удаления пользователя
-                    alert('User deleted successfully');
-                } else {
-                    alert('Error deleting user');
-                }
-            })
-            .catch(error => console.error('Error deleting user:', error));
-    }
+        .catch(error => console.error('Error fetching user data for deletion:', error));
 }
+
+// Функция для отправки запроса на удаление пользователя
+document.getElementById("deleteUserForm").onsubmit = function (event) {
+    event.preventDefault();
+
+    const userId = document.getElementById("deleteId").value;
+
+    // Отправляем запрос на удаление пользователя
+    fetch(`/admin/delete?id=${userId}`, {
+        method: 'DELETE',
+    })
+        .then(response => {
+            if (response.ok) {
+                loadUsers();  // Перезагружаем таблицу после удаления
+                alert('User deleted successfully');
+                var myModal = bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'));
+                myModal.hide();  // Закрываем модальное окно
+            } else {
+                alert('Error deleting user');
+            }
+        })
+        .catch(error => console.error('Error deleting user:', error));
+};
+
 
 // Загружаем пользователей при старте страницы
 document.addEventListener('DOMContentLoaded', function () {

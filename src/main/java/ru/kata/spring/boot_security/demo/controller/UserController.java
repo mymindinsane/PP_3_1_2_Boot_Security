@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +21,7 @@ import ru.kata.spring.boot_security.demo.Service.RoleService;
 import ru.kata.spring.boot_security.demo.Service.UserService;
 
 
+import java.security.Principal;
 import java.util.*;
 
 @RestController
@@ -101,18 +103,25 @@ public class UserController {
         }
 
         userService.addUser(user);
-        return new ResponseEntity<>(user,HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
 
     }
 
 
     @DeleteMapping("/admin/delete")
     private ResponseEntity<?> deleteUser(@RequestParam("id") long userId) {
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails authorisedUser = userService.loadUserByUsername(auth.getName());
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
         User userToDelete = userService.getUserById(userId);
 
-        if (authorisedUser.getUsername().equals(userToDelete.getUsername())) {
+        if (auth.getAuthorities().stream()
+                .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        if (username.equals(userToDelete.getUsername())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         userService.deleteUser(userToDelete);
@@ -126,7 +135,7 @@ public class UserController {
         List<Role> roles = roleService.getAllRoles();
         model.addAttribute("user", user);
         model.addAttribute("roles", roles);
-        return new ResponseEntity<>(user,HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PutMapping("/admin/edituserPUT")
