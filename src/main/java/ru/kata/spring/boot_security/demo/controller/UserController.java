@@ -50,8 +50,8 @@ public class UserController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<User> userInfo(Model model, Authentication authentication) {
+    @GetMapping("/userInfo")
+    public ResponseEntity<User> userInfo(Authentication authentication) {
         List<User> allusers = userService.getAllUsers();
         User user = null;
         for (User u : allusers) {
@@ -59,14 +59,6 @@ public class UserController {
                 user = u;
             }
         }
-        model.addAttribute("user", user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    @GetMapping("/admin/adduser")
-    public ResponseEntity<User> addUser(@ModelAttribute("user") User user, Model model) {
-        List<Role> roles = roleService.getAllRoles();
-        model.addAttribute("roles", roles);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
