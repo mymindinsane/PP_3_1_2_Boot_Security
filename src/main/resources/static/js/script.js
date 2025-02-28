@@ -45,7 +45,7 @@ document.getElementById("editUserForm").onsubmit = function (event) {
     console.log(updatedUser.roles);  // Проверка того, что мы правильно получили роли
 
 // Отправляем обновленные данные на сервер
-    fetch('/admin/edituser', {
+    fetch('/admin/edituserPUT', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

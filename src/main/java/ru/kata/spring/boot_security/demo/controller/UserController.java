@@ -100,8 +100,6 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
-
-
         userService.addUser(user);
         return new ResponseEntity<>(user,HttpStatus.OK);
 
@@ -131,7 +129,7 @@ public class UserController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
-    @PutMapping("/admin/edituser")
+    @PutMapping("/admin/edituserPUT")
     public ResponseEntity<?> updateUser(@RequestBody User user) {
 
         List<User> allUsersList = userService.getAllUsers();
@@ -149,6 +147,7 @@ public class UserController {
         }
 
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            System.out.println("роли пустые");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -168,23 +167,15 @@ public class UserController {
             password = user.getPassword();
         }
 
-        userService.updateUser(user.getId(), user.getUsername(), user.getEmail(),
-                user.getAge(), user.getRoles(), password);
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth.getName().equals(user.getUsername())) {
-            UserDetails updatedUserDetails = userService.loadUserByUsername(user.getUsername());
-            Authentication newAuth = new UsernamePasswordAuthenticationToken(
-                    updatedUserDetails,
-                    auth.getCredentials(),
-                    updatedUserDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(newAuth);
-        }
 
         if (user.getUsername().equals(auth.getName()) && !user.getRoles()
                 .contains(roleService.findRoleByRoleName("ROLE_ADMIN"))) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+
+        userService.updateUser(user.getId(), user.getUsername(), user.getEmail(),
+                user.getAge(), user.getRoles(), password);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
