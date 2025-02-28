@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.Model;
+package ru.kata.spring.boot_security.demo.model;
 
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
