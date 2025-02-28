@@ -134,10 +134,6 @@ public class UserController {
     @PutMapping("/admin/edituser")
     public ResponseEntity<?> updateUser(@RequestBody User user) {
 
-            System.out.println("Received user: " + user);
-            // Логируем username, чтобы увидеть, что приходит
-            System.out.println("Username: " + user.getUsername());
-
         List<User> allUsersList = userService.getAllUsers();
         allUsersList.remove(user);
         List<String> allUsernameWithoutCurrent = new ArrayList<>();
