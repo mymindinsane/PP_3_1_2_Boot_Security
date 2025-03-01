@@ -3,25 +3,16 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.kata.spring.boot_security.demo.Model.Role;
 import ru.kata.spring.boot_security.demo.Model.User;
 import ru.kata.spring.boot_security.demo.Service.RoleService;
 import ru.kata.spring.boot_security.demo.Service.UserService;
 
 
-import java.security.Principal;
 import java.util.*;
 
 @RestController
@@ -36,15 +27,8 @@ public class UserController {
     }
 
     @GetMapping("/admin/allusers")
-    public ResponseEntity<List<User>> listUsers(Authentication authentication) {
+    public ResponseEntity<List<User>> listUsers() {
         List<User> allusers = userService.getAllUsers();
-        List<Role> roles = roleService.getAllRoles();
-        User user = null;
-        for (User u : allusers) {
-            if (u.getUsername().equals(authentication.getName())) {
-                user = u;
-            }
-        }
         return !allusers.isEmpty()
                 ? new ResponseEntity<>(allusers, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -122,11 +106,8 @@ public class UserController {
 
 
     @GetMapping("/admin/edituser")
-    public ResponseEntity<?> editUser(@RequestParam("id") long userId, Model model) {
+    public ResponseEntity<?> editUser(@RequestParam("id") long userId) {
         User user = userService.getUserById(userId);
-        List<Role> roles = roleService.getAllRoles();
-        model.addAttribute("user", user);
-        model.addAttribute("roles", roles);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -148,7 +129,6 @@ public class UserController {
         }
 
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            System.out.println("роли пустые");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 

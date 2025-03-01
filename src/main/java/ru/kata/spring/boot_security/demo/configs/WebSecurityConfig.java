@@ -4,7 +4,6 @@ package ru.kata.spring.boot_security.demo.configs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,9 +11,6 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
-import org.thymeleaf.spring6.SpringTemplateEngine;
-import org.thymeleaf.templateresolver.StringTemplateResolver;
 import ru.kata.spring.boot_security.demo.Service.UserServiceImpl;
 
 @Configuration
@@ -31,20 +27,20 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                        .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/", "/index").permitAll()
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/user/**").hasRole("USER")
-                                .anyRequest().authenticated()
-                        )
-                        .formLogin(login -> login
-                                .successHandler(successUserHandler)
-                                .loginPage("/login")
-                                .permitAll()
-                                .usernameParameter("email")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/index").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasRole("USER")
+                        .anyRequest().authenticated()
+                )
+                .formLogin(login -> login
+                        .successHandler(successUserHandler)
+                        .loginPage("/login")
+                        .permitAll()
+                        .usernameParameter("email")
 
-                        )
-                        .logout(LogoutConfigurer::permitAll).csrf(AbstractHttpConfigurer::disable);
+                )
+                .logout(LogoutConfigurer::permitAll).csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
