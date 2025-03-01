@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.templateresolver.StringTemplateResolver;
 import ru.kata.spring.boot_security.demo.Service.UserServiceImpl;
 
 @Configuration
@@ -59,4 +62,5 @@ public class WebSecurityConfig {
         authenticationProvider.setUserDetailsService(userServiceImpl);
         return authenticationProvider;
     }
+
 }
