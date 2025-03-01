@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
-import ru.kata.spring.boot_security.demo.Model.Role;
+import ru.kata.spring.boot_security.demo.model.Role;
 
 
 import java.util.List;
